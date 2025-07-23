@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>সদস্য তালিকা</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #eef3f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    #summary {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #2980b9;
+      font-size: 1.1rem;
+    }
+
+    #searchInput {
+      display: block;
+      margin: 0 auto 30px auto;
+      padding: 10px 15px;
+      font-size: 1rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 25px;
+      border: 1.5px solid #3498db;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    #searchInput:focus {
+      border-color: #1abc9c;
+      box-shadow: 0 0 8px #1abc9c;
+    }
+
+    #membersContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .member-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 280px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .member-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .member-image {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #3498db;
+      margin-bottom: 10px;
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      background-color: #3498db;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    .member-card h3 {
+      margin: 10px 0 5px;
+      color: #2c3e50;
+    }
+
+    .member-card p {
+      margin: 4px 0;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .serial {
+      background: #3498db;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      .member-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>সদস্য তালিকা</h2>
+
+  <div id="summary">লোড হচ্ছে...</div>
+
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="সদস্যের নাম দিয়ে খুঁজুন..."
+    aria-label="সদস্যের নাম দিয়ে খুঁজুন"
+  />
+
+  <div id="membersContainer">লোড হচ্ছে...</div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4onyu0BJkXxVIQa3wu8X4rf_Lko15X14",
+      authDomain: "member-app-41c63.firebaseapp.com",
+      databaseURL: "https://member-app-41c63-default-rtdb.firebaseio.com",
+      projectId: "member-app-41c63",
+      storageBucket: "member-app-41c63.appspot.com",
+      messagingSenderId: "618764631731",
+      appId: "1:618764631731:web:b71ef2bb26da54bcc2fac6"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const container = document.getElementById("membersContainer");
+    const summary = document.getElementById("summary");
+    const searchInput = document.getElementById("searchInput");
+
+    let membersList = []; // পুরো সদস্য তালিকা সংরক্ষণ করবে
+
+    // একটা ফাংশন: ছবি না থাকলে নামের প্রথম অক্ষর দিয়ে গোল ইনিশিয়াল দেখাবে
+    function createInitialIcon(name) {
+      const div = document.createElement("div");
+      div.className = "member-image";
+      const initial = name ? name.trim().charAt(0).toUpperCase() : "?";
+      div.textContent = initial;
+      return div;
+    }
+
+    function renderMembers(filterText = "") {
+      container.innerHTML = "";
+      let filtered = membersList.filter(member => {
+        if (!filterText) return true;
+        return member.name && member.name.toLowerCase().includes(filterText.toLowerCase());
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>কোন সদস্য পাওয়া যায়নি।</p>";
+        summary.textContent = "মোট সদস্য: ০ জন";
+        return;
+      }
+
+      summary.textContent = `মোট সদস্য: ${filtered.length} জন`;
+
+      filtered.forEach((data, index) => {
+        const card = document.createElement("div");
+        card.className = "member-card";
+
+        // ছবি আছে কি না চেক
+        let imageElement;
+        if (data.photoURL && data.photoURL.trim() !== "") {
+          imageElement = document.createElement("img");
+          imageElement.src = data.photoURL;
+          imageElement.alt = `${data.name || 'সদস্য'} এর ছবি`;
+          imageElement.className = "member-image";
+          imageElement.style.border = "3px solid #3498db";
+          imageElement.style.objectFit = "cover";
+        } else {
+          imageElement = createInitialIcon(data.name);
+        }
+
+        const serialDiv = document.createElement("div");
+        serialDiv.className = "serial";
+        serialDiv.textContent = index + 1;
+
+        const nameH3 = document.createElement("h3");
+        nameH3.textContent = data.name || "-";
+
+        const addressP = document.createElement("p");
+        addressP.innerHTML = `<strong>ঠিকানা:</strong> ${data.address || "-"}`;
+
+        const mobileP = document.createElement("p");
+        mobileP.innerHTML = `<strong>মোবাইল:</strong> ${data.mobile || "-"}`;
+
+        // যোগদানের তারিখ
+        const dateP = document.createElement("p");
+        if (data.joinDate) {
+          // date format: assume yyyy-mm-dd or timestamp - simple display
+          dateP.innerHTML = `<strong>যোগদানের তারিখ:</strong> ${data.joinDate}`;
+        }
+
+        card.appendChild(serialDiv);
+        card.appendChild(imageElement);
+        card.appendChild(nameH3);
+        card.appendChild(addressP);
+        card.appendChild(mobileP);
+        if (data.joinDate) card.appendChild(dateP);
+
+        container.appendChild(card);
+      });
+    }
+
+    database.ref("members").on("value", (snapshot) => {
+      membersList = [];
+      snapshot.forEach((child) => {
+        membersList.push(child.val());
+      });
+      renderMembers(searchInput.value.trim());
+    });
+
+    // Search input এর event listener
+    searchInput.addEventListener("input", (e) => {
+      const val = e.target.value.trim();
+      renderMembers(val);
+    });
+  </script>
+</body>
+</html>
