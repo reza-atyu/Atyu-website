@@ -1,0 +1,243 @@
+/* General body */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navigation Bar */
+nav {
+  background-color: #009688;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1000;
+}
+
+nav a,
+.dropdown-btn {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 20px;
+  display: inline-block;
+  position: relative;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+nav a:hover,
+.dropdown-btn:hover {
+  background-color: #00796b;
+  color: #ffeb3b;
+  border-radius: 5px;
+}
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown content */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #00796b;
+  min-width: 200px;
+  top: 100%;
+  left: 0;
+  z-index: 1100;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex-direction: column;
+  padding: 5px 0;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+  display: block;
+  padding: 10px 20px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-content a:hover {
+  background-color: #004d40;
+  color: #ffeb2b;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+/* Hamburger menu */
+.hamburger-menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 30px;
+  cursor: pointer;
+  z-index: 1200;
+}
+
+.bar {
+  height: 4px;
+  width: 100%;
+  background-color: #ffffff;
+  margin: 3px 0;
+  border-radius: 1px;
+}
+
+/* Hamburger menu dropdown */
+.menu-items {
+  display: none;
+  flex-direction: column;
+  background-color: #006400;
+  padding: 10px;
+  position: fixed;
+  top: 50px;
+  right: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  z-index: 1199;
+  width: 150px;
+}
+
+.menu-items a,
+.menu-items button {
+  margin: 5px 0;
+  text-align: left;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 19px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.menu-items a:hover,
+.menu-items button:hover {
+  background-color: #004d20;
+  color: #ffd700;
+}
+
+/* Sections styling */
+section {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Notice board */
+#notice-board {
+  background-color: #f0f8ff;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.notice {
+  background-color: #fff;
+  padding: 15px;
+  margin: 10px 0;
+  border-left: 5px solid #009688;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notice-title {
+  color: #009688;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Notice form */
+#add-notice-form {
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: left;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+#add-notice-form input,
+#add-notice-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+#add-notice-form button {
+  margin-top: 10px;
+  background-color: #009688;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Theme song section */
+#theme-song {
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 30px 15px;
+  margin: 30px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+
+#theme-song h2 {
+  color: #009688;
+  margin-bottom: 10px;
+}
+
+/* Banner animation */
+#special-banner img {
+  animation: slideIn 1s ease forwards;
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Site title */
+.site-title h1 {
+  color: #00695c;
+  font-size: 2.0em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: 'SolaimanLipi', 'Kalpurush', Arial, sans-serif;
+}
+
+.site-title p {
+  font-size: 18px;
+  color: #333;
+  font-style: italic;
+  margin-top: 0;
+}
