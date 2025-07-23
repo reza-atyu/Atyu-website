@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>অনন্তপুর তেঁতুল তলা যুব ইউনিট</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- হ্যামবার্গার মেনু -->
+  <div class="hamburger-menu" onclick="toggleMenu(event)">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <div class="menu-items" id="menu">
+    <a href="donation.html">চাদা</a>
+    <a href="laws.html">আইন</a>
+    <a href="leaders.html">যোগাযোগ</a>
+    <a href="#theme-song">থিম সং</a>
+    <a href="calendar.html">ক্যালেন্ডার</a>
+  </div>
+
+  <nav>
+    <a href="index.html">হোম</a>
+    <div class="dropdown">
+      <span class="dropdown-btn">মেনু</span>
+      <div class="dropdown-content">
+        <a href="member.html">সদস্য তালিকা</a>
+        <a href="form.html">সদস্য ভর্তি ফরম</a>
+        <a href="responsible.html">দায়িত্বপ্রাপ্ত সদস্য</a>
+      </div>
+    </div>
+    <a href="about.html">আমাদের সম্পর্কে</a>
+    <a href="#contact">যোগাযোগ</a>
+  </nav>
+<!-- বিশেষ দিবস ব্যানার (সরাসরি HTML only) -->
+<section style="text-align: center; margin: 20px 0;">
+  <img src="images/special-day.jpg" alt="বিশেষ দিবস ব্যানার" style="width: 100%; max-width: 700px; border-radius: 10px; display: none;" onerror="this.style.display='none'" onload="this.style.display='block'">
+</section>
+  <!-- হেডার -->
+<section class="site-title">
+  <h1>অনন্তপুর তেঁতুল তলা যুব ইউনিট (ATYU)</h1>
+  <p>মানবতার বৃহত্তর স্বার্থে — আমরা সবাই একসাথে</p>
+  <img src="logo.jpg" alt="ATYU Logo" style="width: 350px; margin-top: 20px;" />
+</section>
+  <!-- নোটিশ বোর্ড -->
+  <section id="notice-board">
+    <h2>নোটিশ বোর্ড</h2>
+    <marquee id="notice-marquee" scrollamount="5"></marquee>
+    <div id="notice-list"></div>
+  </section>
+
+  <!-- নোটিশ ফর্ম -->
+  <form id="add-notice-form">
+    <div id="password-section" style="display:none;">
+      <label for="notice-password">পাসওয়ার্ড:</label>
+      <input type="password" id="notice-password" required />
+    </div>
+    <label for="notice-title">নোটিশ শিরোনাম:</label>
+    <input type="text" id="notice-title" required />
+    <label for="notice-content">নোটিশ বিষয়:</label>
+    <textarea id="notice-content" rows="4" required></textarea>
+    <button type="button" onclick="showPasswordField()">নোটিশ যোগ করুন</button>
+    <button type="submit">সাবমিট</button>
+  </form>
+
+  <!-- থিম সং -->
+  <section id="theme-song">
+    <h2>আমাদের থিম সং 🎵</h2>
+    <p>অনন্তপুর তেঁতুল তলা যুব ইউনিটের গান শুনুন।</p>
+    <audio controls>
+      <source src="atyu-theme-song.mp3" type="audio/mpeg" />
+      আপনার ব্রাউজার অডিও প্লে করতে পারে না।
+    </audio>
+
+    <!-- নামাজের সময় -->
+    <section id="prayer-times-section">
+      <h2>আজকের নামাজের সময় 🕌</h2>
+      <div id="prayer-times" style="font-size: 18px; line-height: 1.8;">লোড হচ্ছে...</div>
+    </section>
+  </section>
+
+  <!-- যোগাযোগ -->
+  <section id="contact">
+  <section id="map">
+  <h2>Google ম্যাপে আমাদের অবস্থান</h2>
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14411.574029973486!2d89.6003045!3d26.0187373!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e2c3b0b44155c7%3A0x7f3bd7d116dea6b9!2z4Kas4Ka-4KaV4Ka-4Ka54KeAIOCmqOCnjeCmrOCmv-CmqCDgprjgprjgp4fgpqjgp4fgpr7gpqg!5e0!3m2!1sen!2sbd!4v1721645574170!5m2!1sen!2sbd"
+    width="100%"
+    height="350"
+    style="border:0; border-radius: 10px;"
+    allowfullscreen=""
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</section>
+
+    <h2>যোগাযোগ</h2>
+    <ul>
+      <li><strong>ঠিকানা:</strong> ঘুঘুরহাট, ফুলবাড়ী, কুড়িগ্রাম</li>
+      <li><strong>WhatsApp:</strong> <a href="https://wa.me/8801773850598" target="_blank">০১৭৭৩-৮৫০৫৮৮</a></li>
+      <li><strong>Email:</strong> <a href="mailto:atyu2025@gmail.com">atyu2025@gmail.com</a></li>
+      <li><strong>Facebook:</strong> শীঘ্রই আসছে</li>
+    </ul>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
