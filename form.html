@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>সদস্য ভর্তি ফরম</title>
+  <style>
+    body {
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #006400;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #004d00;
+    }
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .radio-group {
+      margin-top: 6px;
+    }
+    .radio-group label {
+      font-weight: normal;
+      margin-right: 20px;
+    }
+    button[type="submit"] {
+      margin-top: 25px;
+      background-color: #007B00;
+      color: white;
+      font-size: 18px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button[type="submit"]:hover {
+      background-color: #004d00;
+    }
+    .pledge {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #888;
+      border-radius: 8px;
+      background: #f0f8ff;
+      color: #333;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .pledge h3 {
+      color: #005500;
+      margin-top: 0;
+    }
+    .agree-checkbox {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h2>সদস্য ভর্তি ফরম</h2>
+
+  <div class="pledge">
+    <h3>অঙ্গীকার নামা</h3>
+    <p>
+      আমি নিম্নে স্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, অনন্তপুর তেঁতুল তলা যুব ইউনিট (ATYU) এর নীতিমালা পরিপন্থী কোন কার্যক্রমে অংশ গ্রহন করিব না... [সংক্ষেপ করা হয়েছে]
+    </p>
+    <label class="agree-checkbox">
+      <input type="checkbox" id="agreeCheckbox" required />
+      উপরোক্ত অঙ্গীকারনামা পড়েছি এবং সম্মত।
+    </label>
+  </div>
+
+  <form id="memberForm">
+    <label for="name">নাম <span style="color:red">*</span></label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="fatherName">পিতার নাম <span style="color:red">*</span></label>
+    <input type="text" id="fatherName" name="fatherName" required />
+
+    <label for="mobile">মোবাইল নম্বর <span style="color:red">*</span></label>
+    <input type="tel" id="mobile" name="mobile" pattern="^01[0-9]{9}$" placeholder="017xxxxxxxx" required title="১১ সংখ্যার সঠিক মোবাইল নম্বর দিন" />
+
+    <label for="address">ঠিকানা <span style="color:red">*</span></label>
+    <input type="text" id="address" name="address" required placeholder="গ্রাম, উপজেলা, জেলা" title="সম্পূর্ণ ঠিকানা দিন" />
+
+    <label for="birthDate">জন্ম তারিখ <span style="color:red">*</span></label>
+    <input type="date" id="birthDate" name="birthDate" required />
+
+    <label for="profession">পেশা <span style="color:red">*</span></label>
+    <select id="profession" name="profession" required>
+      <option value="">-- নির্বাচন করুন --</option>
+      <option value="কৃষক">কৃষক</option>
+      <option value="শিক্ষক">শিক্ষক</option>
+      <option value="ব্যবসায়ী">ব্যবসায়ী</option>
+      <option value="ছাত্র">ছাত্র</option>
+      <option value="চাকরিজীবী">চাকরিজীবী</option>
+      <option value="ফ্রিল্যান্সার">ফ্রিল্যান্সার</option>
+      <option value="অন্যান্য">অন্যান্য</option>
+    </select>
+
+    <label for="education">শিক্ষাগত যোগ্যতা <span style="color:red">*</span></label>
+    <select id="education" name="education" required>
+      <option value="">-- নির্বাচন করুন --</option>
+      <option value="প্রাথমিক">প্রাথমিক</option>
+      <option value="মাধ্যমিক">মাধ্যমিক</option>
+      <option value="এইচএসসি">এইচএসসি</option>
+      <option value="স্নাতক">স্নাতক</option>
+      <option value="স্নাতকোত্তর">স্নাতকোত্তর</option>
+      <option value="অন্যান্য">অন্যান্য</option>
+    </select>
+
+    <label>লিঙ্গ <span style="color:red">*</span></label>
+    <div class="radio-group">
+      <label><input type="radio" name="gender" value="পুরুষ" required> পুরুষ</label>
+      <label><input type="radio" name="gender" value="নারী" required> নারী</label>
+      <label><input type="radio" name="gender" value="অন্যান্য" required> অন্যান্য</label>
+    </div>
+
+    <button type="submit">জমা দিন</button>
+  </form>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4onyu0BJkXxVIQa3wu8X4rf_Lko15X14",
+      authDomain: "member-app-41c63.firebaseapp.com",
+      databaseURL: "https://member-app-41c63-default-rtdb.firebaseio.com",
+      projectId: "member-app-41c63",
+      storageBucket: "member-app-41c63.appspot.com",
+      messagingSenderId: "618764631731",
+      appId: "1:618764631731:web:b71ef2bb26da54bcc2fac6",
+      measurementId: "G-KKRG58DQKR"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const form = document.getElementById('memberForm');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const agreeCheckbox = document.getElementById('agreeCheckbox');
+      if (!agreeCheckbox.checked) {
+        alert('অনুগ্রহ করে অঙ্গীকারনামায় সম্মতি দিন।');
+        return;
+      }
+
+      const mobile = form.mobile.value;
+      if (!/^01[0-9]{9}$/.test(mobile)) {
+        alert("সঠিক মোবাইল নম্বর লিখুন (যেমন: 017xxxxxxxx)");
+        return;
+      }
+
+      const memberData = {
+        name: form.name.value,
+        fatherName: form.fatherName.value,
+        mobile: form.mobile.value,
+        address: form.address.value,
+        birthDate: form.birthDate.value,
+        profession: form.profession.value,
+        education: form.education.value,
+        gender: form.gender.value,
+        timestamp: Date.now()
+      };
+
+      const newMemberKey = database.ref().child('members').push().key;
+      const updates = {};
+      updates['/members/' + newMemberKey] = memberData;
+
+      database.ref().update(updates)
+        .then(() => {
+          alert('সদস্য তথ্য সফলভাবে জমা হয়েছে। ধন্যবাদ!');
+          form.reset();
+        })
+        .catch((error) => {
+          alert('দুঃখিত, তথ্য জমা দিতে সমস্যা হয়েছে: ' + error.message);
+        });
+    });
+  </script>
+</body>
+</html>
