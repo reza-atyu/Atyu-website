@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ইভেন্ট ক্যালেন্ডার (বাংলা-ইংরেজি-হিজরি)</title>
+
+<!-- Styles -->
+<style>
+  :root {
+    --en-color: #d32f2f;   /* English (Gregorian) */
+    --bn-color: #000000;   /* Bangla */
+    --hj-color: #1565c0;   /* Hijri */
+    --event-bg: #ffecb3;
+    --event-text: #bf360c;
+    --today-ring: #43a047;
+  }
+  body {
+    font-family: 'SolaimanLipi', Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0 10px 50px;
+    color: #333;
+  }
+  header {
+    text-align: center;
+    padding: 16px 0 8px;
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 1.4rem;
+  }
+  #today-strip {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  #today-strip span.label {font-weight:600;}
+  #today-strip .en {color:var(--en-color);}
+  #today-strip .bn {color:var(--bn-color);}
+  #today-strip .hj {color:var(--hj-color);}
+
+  /* Calendar Nav */
+  .cal-nav {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:500px;
+    margin:0 auto 8px;
+    gap:6px;
+  }
+  .cal-nav button {
+    padding:4px 10px;
+    font-size:1rem;
+    cursor:pointer;
+  }
+  .cal-nav-title {
+    flex:1;
+    text-align:center;
+    font-weight:700;
+    font-size:1.1rem;
+    line-height:1.2;
+  }
+  .cal-nav-title small {
+    display:block;
+    font-weight:400;
+    font-size:0.8rem;
+  }
+
+  /* Calendar Table */
+  .cal-wrapper {
+    max-width:500px;
+    margin:0 auto;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 0 8px rgba(0,0,0,0.1);
+    overflow:hidden;
+  }
+  table.cal {
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+  .cal thead th {
+    background:#006999;
+    color:#fff;
+    font-size:0.9rem;
+    padding:6px 0;
+  }
+  .cal tbody td {
+    height:60px;
+    border:1px solid #e0e0e0;
+    vertical-align:top;
+    position:relative;
+    padding:2px;
+    font-size:0.8rem;
+  }
+  .date-cell {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:flex-start;
+    height:100%;
+    width:100%;
+    padding:2px 2px 2px 4px;
+    box-sizing:border-box;
+  }
+  .date-en {
+    font-size:0.95rem;
+    font-weight:600;
+    color:var(--en-color);
+    line-height:1.1;
+  }
+  .date-sub {
+    margin-top:2px;
+    font-size:0.75rem;
+    line-height:1.1;
+  }
+  .date-sub .bn {color:var(--bn-color);margin-right:4px;}
+  .date-sub .hj {color:var(--hj-color);}
+  .event-day {
+    background:var(--event-bg);
+    color:var(--event-text);
+  }
+  .event-dot {
+    position:absolute;
+    bottom:2px;
+    right:2px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--event-text);
+  }
+  .today {
+    outline:2px solid var(--today-ring);
+    outline-offset:-2px;
+    border-color:var(--today-ring)!important;
+  }
+
+  /* Event tooltip mini */
+  .cal tbody td[data-event]:hover::after {
+    content:attr(data-event);
+    position:absolute;
+    bottom:100%;
+    left:50%;
+    transform:translateX(-50%);
+    background:#333;
+    color:#fff;
+    padding:2px 6px;
+    font-size:0.7rem;
+    border-radius:4px;
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:5;
+  }
+
+  /* Countdown box */
+  #next-event-box {
+    max-width:500px;
+    margin:16px auto 0;
+    background:#e3f2fd;
+    border-left:4px solid #2196f3;
+    padding:12px;
+    border-radius:4px;
+    font-size:1rem;
+    line-height:1.4;
+    text-align:center;
+  }
+  #next-event-name {font-weight:700;}
+  #next-event-time {font-size:0.95rem;}
+
+  /* Responsive small */
+  @media (max-width:400px){
+    .cal-nav-title{font-size:1rem;}
+    .cal thead th{font-size:0.8rem;}
+    .cal tbody td{height:52px;}
+    .date-en{font-size:0.9rem;}
+    .date-sub{font-size:0.7rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ইভেন্ট ক্যালেন্ডার</h1>
+  <div id="today-strip">লোড হচ্ছে...</div>
+</header>
+
+<!-- Calendar Navigation -->
+<div class="cal-nav">
+  <button id="prev-month" aria-label="আগের মাস">◀</button>
+  <div class="cal-nav-title" id="cal-title"></div>
+  <button id="next-month" aria-label="পরের মাস">▶</button>
+</div>
+
+<!-- Calendar -->
+<div class="cal-wrapper">
+  <table class="cal">
+    <thead>
+      <tr>
+        <th>রবি</th>
+        <th>সোম</th>
+        <th>মঙ্গল</th>
+        <th>বুধ</th>
+        <th>বৃহস্পতি</th>
+        <th>শুক্র</th>
+        <th>শনি</th>
+      </tr>
+    </thead>
+    <tbody id="cal-body"></tbody>
+  </table>
+</div>
+
+<!-- Next Event -->
+<div id="next-event-box">
+  <div id="next-event-name">পরবর্তী ইভেন্ট লোড হচ্ছে...</div>
+  <div id="next-event-time"></div>
+</div>
+
+<!-- Hijri library -->
+<script src="https://cdn.jsdelivr.net/npm/hijri-date/lib/hijri-date.min.js"></script>
+
+<script>
+/* -------------------------
+   Bangla & Hijri Helpers
+--------------------------*/
+
+// Bangla month names (Bangladesh national calendar pattern)
+const BN_MONTHS = [
+  "বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন",
+  "কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"
+];
+
+// Approx days per Bangla month (BD Revised; 1st 5 months 31 days; rest 30; Falgun 29/30 leap)
+const BN_MONTH_LENGTHS_COMMON = [31,31,31,31,31,30,30,30,30,30,29,30];
+const BN_MONTH_LENGTHS_LEAP   = [31,31,31,31,31,30,30,30,30,30,30,30]; // Falgun 30 in leap
+
+// Convert Gregorian date -> Bangla date (approx; official calendar uses fixed 14 April start)
+function gregorianToBangla(gDate){
+  // Reference: Bangla year 1428 started on 14 April 2021 (Gregorian).
+  const refBanglaYear = 1428;
+  const refGreg = new Date(2021,3,14); // Apr 14 2021
+  const msPerDay = 24*60*60*1000;
+  const diffDays = Math.floor((gDate - refGreg)/msPerDay);
+
+  // Estimate Bangla year offset
+  const approxYears = Math.floor(diffDays / 365.2425);
+  let bnYear = refBanglaYear + approxYears;
+
+  // Days since start of current Bangla year
+  // Recompute start-of-bn-year for this bnYear:
+  const bnYearStart = new Date(refGreg.getFullYear()+approxYears, 3, 14); // simplistic shift by years
+  let dayOfYear = Math.floor((gDate - bnYearStart)/msPerDay);
+  if(dayOfYear < 0){
+    // If date before current assumed start, roll back one year
+    bnYear--;
+    const prevYearStart = new Date(refGreg.getFullYear()+approxYears-1, 3, 14);
+    dayOfYear = Math.floor((gDate - prevYearStart)/msPerDay);
+  }
+
+  // Determine leap? We'll treat Gregorian leap aligning; close enough:
+  const gregYear = gDate.getFullYear();
+  const isLeap = ((gregYear % 4 === 0 && gregYear % 100 !== 0) || (gregYear % 400 === 0));
+
+  const monthLengths = isLeap ? BN_MONTH_LENGTHS_LEAP : BN_MONTH_LENGTHS_COMMON;
+
+  let bnMonth = 0;
+  let dayRemaining = dayOfYear;
+  for(let i=0;i<12;i++){
+    const mlen = monthLengths[i];
+    if(dayRemaining < mlen){
+      return {year:bnYear, month:i, day:dayRemaining+1};
+    }
+    dayRemaining -= mlen;
+    bnMonth++;
+  }
+  // fallback end-year
+  return {year:bnYear, month:11, day:monthLengths[11]};
+}
+
+// Bangla digit conversion
+const BN_DIGITS = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+function toBnDigits(num){
+  return String(num).split("").map(ch => {
+    if(ch>='0' && ch<='9') return BN_DIGITS[Number(ch)];
+    return ch;
+  }).join("");
+}
+
+// Hijri month names (Bangla transliteration)
+const HJ_MONTHS = [
+  "মুহাররম","সফর","রবিউল আউয়াল","রবিউস সানি",
+  "জমাদিউল আউয়াল","জমাদিউস সানি","রজব","শাবান",
+  "রমজান","শাওয়াল","জিলকদ","জিলহজ"
+];
+
+// Convert Gregorian -> Hijri (using HijriDate lib if available; else approx)
+function gregorianToHijri(gDate){
+  try{
+    const hj = new HijriDate(gDate);
+    return {year:hj.getFullYear(), month:hj.getMonth(), day:hj.getDate()};
+  }catch(e){
+    // Fallback rough approx (NOT accurate; rarely used if lib fails)
+    const msPerDay = 24*60*60*1000;
+    // Rough epoch: 16 July 622 Gregorian ~ 1 Muharram AH 1
+    const epoch = Date.UTC(622,6,16);
+    const days = Math.floor((gDate.getTime() - epoch)/msPerDay);
+    // Hijri year ~ 354.367 days
+    let hYear = Math.floor(days/354.367)+1;
+    let dayOfYear = days - Math.floor((hYear-1)*354.367);
+    const hijriMonthLengths = [30,29,30,29,30,29,30,29,30,29,30,29]; // simplified
+    let hMonth=0;
+    while(hMonth<12 && dayOfYear >= hijriMonthLengths[hMonth]){
+      dayOfYear -= hijriMonthLengths[hMonth];
+      hMonth++;
+    }
+    if(hMonth>11) hMonth=11;
+    return {year:hYear, month:hMonth, day:dayOfYear+1};
+  }
+}
+
+/* -------------------------
+   Islamic Events Generator
+   (auto every Gregorian year window)
+--------------------------*/
+/*
+  We'll auto-generate events for current & next Hijri year using Hijri fixed dates:
+   - 1 Shawwal (ঈদুল ফিতর)
+   - 10 Dhul Hijjah (ঈদুল আযহা)
+   - 10 Muharram (আশুরা)
+   - 12 Rabi al-Awwal (মিলাদুন্নবী)
+   - 15 Sha'ban (শবে বরাত)
+   - 27 Rajab (শবে মেরাজ)
+   - 27 Ramadan (লাইলাতুল কদর)  *Note: many communities observe 27th; actual may vary
+*/
+const ISLAMIC_EVENTS_RULES = [
+  {name:"ঈদুল ফিতর",    hm:9,  hd:1},   // Shawwal index 9
+  {name:"ঈদুল আযহা",    hm:11, hd:10},  // Dhul Hijjah
+  {name:"আশুরা",        hm:0,  hd:10},  // Muharram
+  {name:"মিলাদুন্নবী",  hm:2,  hd:12},  // Rabi al-Awwal
+  {name:"শবে বরাত",     hm:7,  hd:15},  // Sha'ban
+  {name:"শবে মেরাজ",    hm:6,  hd:27},  // Rajab
+  {name:"লাইলাতুল কদর", hm:8,  hd:27},  // Ramadan
+];
+
+// Convert a Hijri date -> Gregorian Date (approx by scanning days)
+function hijriToGregorian(hYear, hMonth, hDay){
+  // We'll brute-force search around estimated range: convert 1 Muharram of hYear then add days
+  // Use HijriDate lib if available
+  try{
+    // HijriDate(year, month, day)
+    const hj = new HijriDate(hYear, hMonth, hDay);
+    return new Date(hj.getTime());
+  }catch(e){
+    // fallback: naive incremental search around epoch
+    // start guess: 354.367*(hYear-1) days from Hijri epoch (622-07-16 UTC)
+    const epoch = Date.UTC(622,6,16);
+    const approxDays = Math.floor((hYear-1)*354.367 + hMonth*29.53 + (hDay-1));
+    return new Date(epoch + approxDays*24*60*60*1000);
+  }
+}
+
+// Build event list (Gregorian Dates) for visible range: current Gregorian year - 1 to +2
+function buildIslamicEventsRange(){
+  const today = new Date();
+  const hjToday = gregorianToHijri(today);
+  const years = [hjToday.year-1, hjToday.year, hjToday.year+1, hjToday.year+2];
+  const out = [];
+  for(const hy of years){
+    for(const rule of ISLAMIC_EVENTS_RULES){
+      const g = hijriToGregorian(hy, rule.hm, rule.hd);
+      out.push({name:rule.name, date:g});
+    }
+  }
+  // sort
+  out.sort((a,b)=>a.date-b.date);
+  return out;
+}
+
+// We'll build once and reuse
+const islamicEvents = buildIslamicEventsRange();
+
+/* -------------------------
+   Rendering Today's triple date
+--------------------------*/
+function renderTodayStrip(){
+  const now = new Date();
+  const bn = gregorianToBangla(now);
+  const hj = gregorianToHijri(now);
+  const strip = document.getElementById("today-strip");
+  strip.innerHTML = `
+    <span class="label">আজ: </span>
+    <span class="en">${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}</span><br>
+    <span class="bn">${toBnDigits(bn.year)} বঙ্গাব্দ, ${BN_MONTHS[bn.month]} ${toBnDigits(bn.day)}</span><br>
+    <span class="hj">${toBnDigits(hj.year)} হিজরি, ${HJ_MONTHS[hj.month]} ${toBnDigits(hj.day)}</span>
+  `;
+}
+
+/* -------------------------
+   Calendar Grid Rendering
+--------------------------*/
+let viewYear, viewMonth; // Gregorian month being viewed
+
+function renderCalendar(){
+  const tbody = document.getElementById("cal-body");
+  tbody.innerHTML = "";
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+  // Title: show Gregorian + Bangla + Hijri-of-1st-day
+  const firstDate = new Date(viewYear, viewMonth, 1);
+  const bn1 = gregorianToBangla(firstDate);
+  const hj1 = gregorianToHijri(firstDate);
+  document.getElementById("cal-title").innerHTML = `
+    ${firstDate.toLocaleString("en-US",{month:"long"})} ${viewYear}
+    <small>${BN_MONTHS[bn1.month]} / ${HJ_MONTHS[hj1.month]}</small>
+  `;
+
+  let date = 1;
+  for(let i=0;i<6;i++){
+    const row = document.createElement("tr");
+    for(let j=0;j<7;j++){
+      const cell = document.createElement("td");
+      if(i===0 && j<firstDay){
+        // empty pre-padding
+      } else if(date > daysInMonth){
+        // empty trailing
+      } else {
+        const gDate = new Date(viewYear, viewMonth, date);
+        const bn = gregorianToBangla(gDate);
+        const hj = gregorianToHijri(gDate);
+
+        const wrap = document.createElement("div");
+        wrap.className="date-cell";
+        wrap.innerHTML = `
+          <div class="date-en">${date}</div>
+          <div class="date-sub"><span class="bn">${toBnDigits(bn.day)}</span><span class="hj">${toBnDigits(hj.day)}</span></div>
+        `;
+        cell.appendChild(wrap);
+
+        // Event?
+        const ev = islamicEvents.find(ev =>
+          ev.date.getFullYear()===gDate.getFullYear() &&
+          ev.date.getMonth()===gDate.getMonth() &&
+          ev.date.getDate()===gDate.getDate()
+        );
+        if(ev){
+          cell.classList.add("event-day");
+          cell.dataset.event = ev.name;
+          const dot = document.createElement("span");
+          dot.className="event-dot";
+          cell.appendChild(dot);
+        }
+
+        // Today highlight
+        const today = new Date();
+        if(gDate.getFullYear()===today.getFullYear() &&
+           gDate.getMonth()===today.getMonth() &&
+           gDate.getDate()===today.getDate()){
+          cell.classList.add("today");
+        }
+
+        date++;
+      }
+      row.appendChild(cell);
+    }
+    tbody.appendChild(row);
+    if(date > daysInMonth) break;
+  }
+}
+
+/* -------------------------
+   Month Nav Buttons
+--------------------------*/
+document.getElementById("prev-month").addEventListener("click",()=>{
+  viewMonth--;
+  if(viewMonth<0){viewMonth=11;viewYear--;}
+  renderCalendar();
+});
+document.getElementById("next-month").addEventListener("click",()=>{
+  viewMonth++;
+  if(viewMonth>11){viewMonth=0;viewYear++;}
+  renderCalendar();
+});
+
+/* -------------------------
+   Next Event Countdown
+--------------------------*/
+function findNextEvent(){
+  const now = new Date();
+  for(const ev of islamicEvents){
+    if(ev.date > now) return ev;
+  }
+  return null;
+}
+
+function startCountdown(){
+  const boxName = document.getElementById("next-event-name");
+  const boxTime = document.getElementById("next-event-time");
+  let nextEv = findNextEvent();
+
+  function tick(){
+    if(!nextEv){
+      boxName.textContent = "কোনো আসন্ন ইভেন্ট নেই।";
+      boxTime.textContent = "";
+      return;
+    }
+    const now = new Date();
+    const diff = nextEv.date - now;
+    if(diff <= 0){
+      boxName.textContent = `${nextEv.name} চলছে!`;
+      boxTime.textContent = "";
+      // move to next
+      nextEv = findNextEvent();
+      return;
+    }
+    const d = Math.floor(diff/86400000);
+    const h = Math.floor(diff/3600000)%24;
+    const m = Math.floor(diff/60000)%60;
+    const s = Math.floor(diff/1000)%60;
+    boxName.textContent = `পরবর্তী ইভেন্ট: ${nextEv.name}`;
+    boxTime.textContent  = `বাকি: ${toBnDigits(d)} দিন ${toBnDigits(h)} ঘ ${toBnDigits(m)} মি ${toBnDigits(s)} সে`;
+  }
+
+  tick();
+  setInterval(tick,1000);
+}
+
+/* -------------------------
+   Init
+--------------------------*/
+(function init(){
+  const today = new Date();
+  viewYear = today.getFullYear();
+  viewMonth = today.getMonth(); // start from *today's* month (আপনার চাওয়া)
+  renderTodayStrip();
+  renderCalendar();
+  startCountdown();
+})();
+</script>
+
+</body>
+</html>
